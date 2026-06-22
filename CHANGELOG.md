@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here. Versioning follows SemVer.
 
+## v0.1.3 - 2026-06-22
+### Added
+- Agent enforces a single live note every run: unchecks extras (newest edit wins) and auto-checks the least recently shown note when none are live
+
 ## v0.1.2 - 2026-06-22
 ### Fixed
 - Bootstrap packager now resolves the agent source at the repo root instead of inside bootstrap
