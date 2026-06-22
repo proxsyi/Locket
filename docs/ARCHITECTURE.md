@@ -1,48 +1,45 @@
-# Locket — Architecture (Notion backend, personal build)
+# Locket — Architecture (Notion backend)
 
 ```
-   you, phone           Notion                     partner's Mac
-  ┌──────────┐      ┌─────────────┐        ┌───────────────┐
-  │ Notion   │─────▶│ Locket Notes │◀─────│ LaunchAgent    │
-  │ app:     │ set  │ Live = true  │ read   │ at login +     │
-  │ mark Live│      │ (one row)    │ (token)│ every 30 min    │
-  └──────────┘      └─────────────┘        └──────┬───────┘
-                                                  ▼ defaults write
-                                          💌 LoginwindowText
+   you, phone           Notion                     their Mac
+  ┌──────────┐      ┌───────────────┐       ┌─────────────────┐
+  │ Notion   │─────▶│ Locket — Notes │◀──────│ LaunchAgent      │
+  │ app:     │ set  │ Live = true    │ read   │ login +          │
+  │ mark Live│      │ (one row)      │(token) │ every 60s        │
+  └──────────┘      └───────────────┘       └───────┬─────────┘
+                                                     ▼ defaults write
+                                             💌 LoginwindowText
 ```
 
 ## Why no server
 
-Notion is the database + the API. Your phone writes via the Notion app; the Mac
-reads via the Notion API. Nothing to host, nothing to pay for.
+Notion is the database and the API. Your phone writes via the Notion app; the Mac reads via the Notion API. Nothing to host, nothing to pay for.
 
 ## Pieces
 
-- **Notion DB (`Locket — Notes`)** — one row per note. `Live` checkbox marks the
-  active one. The agent queries `Live = true`, newest-edited wins.
-- **Bootstrap (`bootstrap/setup.py`)** — runs on your Mac. Verifies your Notion
-  token + DB ID, bakes them into the agent config, emits `locket-partner.tar.gz`
-  and the `scp`/`ssh` commands.
-- **Agent (`agent/`)** — runs on the partner's Mac. `install.sh` drops it in
-  `~/.locket`, adds a narrow single-command sudoers rule, registers a
-  LaunchAgent (RunAtLoad + 30-min StartInterval). `locket-agent.py` GETs the
-  Live note and writes `LoginwindowText`.
+- **Notion DB (`Locket — Notes`)** — one row per note. `Live` marks the active one.
+- **Bootstrap (`bootstrap/setup.py`)** — runs on your Mac. Verifies token + DB ID, bakes them into the agent config, emits `locket-partner.tar.gz` and the send commands.
+- **Agent (`agent/`)** — runs on the recipient's Mac. `install.sh` drops it in `~/.locket`, adds a narrow single-command sudoers rule, and registers a LaunchAgent (RunAtLoad + 60-second StartInterval). `locket-agent.py` reads the Live note and writes `LoginwindowText`.
+
+## Single-Live enforcement
+
+Notion has no native "exactly one checkbox" constraint, so the agent enforces it every run:
+
+- More than one Live → keep the most recently edited, uncheck the rest.
+- Zero Live → auto-check the least recently shown.
+- Exactly one Live → no change.
+
+This needs the integration's **Update content** capability. Read-only falls back to "newest Live wins" with no self-correction.
 
 ## Security model
 
-- The partner's Mac holds a Notion **integration token** scoped to ONE database
-  you explicitly shared with it. It can't see the rest of your workspace.
-- Use a **read-only** integration if you don't care about the “Last Shown” stamp.
-- Token lives in `~/.locket/locket.conf.json` (chmod 600). Harden by moving it
-  into the login Keychain if you want.
-- Kill switch: remove the integration from the DB's Connections (or uncheck all
-  Live notes). Agent then gets nothing and leaves the screen as-is. Full removal:
-  `uninstall.sh`.
+- Token scoped to ONE shared database; it can't see the rest of the workspace.
+- Token in `~/.locket/locket.conf.json` (chmod 600), never committed.
+- Kill switch: remove the integration from the database's Connections, or `uninstall.sh`.
 
 ## Limits / TODO
 
-- macOS-only agent (uses `LoginwindowText`). Windows/Linux would each need their
-  own installer + display path.
-- Poll model (login + 30-min interval), not push. Fine for lock-screen notes.
-- Single device assumed. Multiple partner Macs = run the installer on each.
-- Notion rate limits are ~3 req/s — a non-issue at this cadence.
+- macOS-only agent (uses `LoginwindowText`). Windows / Linux would each need their own installer and display path.
+- Poll model (login + every 60s), not push. Fine for lock-screen notes.
+- One Live note is shared across all devices. Multiple Macs show the same note; per-device notes would need an extra field.
+- Notion rate limits (~3 req/s) are a non-issue at this cadence.
