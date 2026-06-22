@@ -31,7 +31,7 @@ cat > "$PLIST" <<PLIST
         <string>$ROOT/locket-agent.py</string>
     </array>
     <key>RunAtLoad</key><true/>
-    <key>StartInterval</key><integer>1800</integer>
+    <key>StartInterval</key><integer>60</integer>
     <key>LimitLoadToSessionType</key><string>Aqua</string>
     <key>StandardOutPath</key><string>$ROOT/stdout.log</string>
     <key>StandardErrorPath</key><string>$ROOT/stderr.log</string>

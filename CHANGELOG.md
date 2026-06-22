@@ -2,6 +2,10 @@
 
 All notable changes to this project are documented here. Versioning follows SemVer.
 
+## v0.1.4 - 2026-06-22
+### Fixed
+- LaunchAgent now refreshes every 60 seconds; the installer was still shipping the old 1800 second interval
+
 ## v0.1.3 - 2026-06-22
 ### Added
 - Agent enforces a single live note every run: unchecks extras (newest edit wins) and auto-checks the least recently shown note when none are live

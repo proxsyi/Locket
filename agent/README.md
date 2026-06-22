@@ -32,7 +32,7 @@ Login” must be on under System Settings → General → Sharing.)
 
 - Installs to `~/.locket`
 - Adds a Login Item (LaunchAgent `com.locket.agent`) that runs at every login
-  and refreshes every 30 minutes while you're logged in
+  and refreshes every 1 minute while you're logged in
 - Pulls whatever note is currently “live” and shows it on the lock screen
 
 ## Uninstall
