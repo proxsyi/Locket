@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+locket-partner/
+locket-partner.tar.gz
+locket.conf.json
+build/
+.DS_Store
