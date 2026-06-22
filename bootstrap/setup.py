@@ -2,7 +2,7 @@
 import json, os, re, shutil, sys, tarfile, urllib.request, urllib.error
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-AGENT_SRC = os.path.join(HERE, "agent")
+AGENT_SRC = os.path.join(os.path.dirname(HERE), "agent")
 OUT_DIR = os.path.join(HERE, "locket-partner")
 TARBALL = os.path.join(HERE, "locket-partner.tar.gz")
 NOTION_VERSION = "2022-06-28"
