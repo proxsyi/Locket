@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. Versioning follows SemVer.
 
+## v0.2.4 - 2026-06-23
+### Added
+- Added `docs/STATUS.md` with current shipped state, runtime behavior, verified installs, known bugs, and next planned work
+
+### Changed
+- README and architecture docs now point to the current status document and accurately call out that instant-login rotation still needs verification on Lauren's Mac
+
 ## v0.2.3 - 2026-06-23
 ### Added
 - Login LaunchAgent now checks for updates first, then rotates and writes the lock-screen note immediately

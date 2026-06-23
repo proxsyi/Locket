@@ -58,3 +58,8 @@ Auto-update is intentionally tag-based. A new version only rolls out after it is
 ## Legacy cleanup
 
 The installer unloads and removes known private-build lock-screen LaunchAgents and old dotfolders from earlier iterations, including `com.cash.lockscreen-v2` and related labels, before loading Locket.
+
+
+## Current verification status
+
+See `docs/STATUS.md` for the latest operational status, verified installs, known bugs, and planned fixes. As of v0.2.3, sync and updater are verified on Lauren's Mac; the instant-login rotate path still needs a focused fix/verification pass.

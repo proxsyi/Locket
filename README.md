@@ -19,7 +19,7 @@ You keep a small database of notes in Notion. Mark one **Live**, and their Mac s
 ```
 
 - Their Mac runs a tiny Python agent as a Login Item.
-- At login, it checks for updates first, then rotates to a different note and writes it immediately. Every 60 seconds while logged in, it syncs the current **Live** note from your Notion database and writes it to the lock screen.
+- At login, it is intended to check for updates first, then rotate to a different note and write it immediately. The 60-second sync path is verified; the instant-login path is tracked in docs/STATUS.md until fully verified on Lauren's Mac. Every 60 seconds while logged in, it syncs the current **Live** note from your Notion database and writes it to the lock screen.
 - Exactly one note is ever Live — the agent enforces that (see below).
 
 ## What you need
@@ -114,6 +114,10 @@ Notion can't enforce this on its own, so the agent does, every run:
 - If exactly one is Live, it leaves everything alone.
 
 So you can just check a new note and the previous one sorts itself out.
+
+## Current status / known issues
+
+See [`docs/STATUS.md`](docs/STATUS.md) for the current shipped state, verified installs, known bugs, and next planned work.
 
 ## Running it manually / checking logs
 
