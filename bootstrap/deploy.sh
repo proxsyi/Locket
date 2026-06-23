@@ -11,5 +11,5 @@ if [ ! -f locket-partner.tar.gz ]; then
     exit 1
 fi
 scp locket-partner.tar.gz "$TARGET":~/
-ssh "$TARGET" 'tar xzf locket-partner.tar.gz && cd locket-partner && ./install.sh'
+ssh -tt "$TARGET" 'tar xzf locket-partner.tar.gz && cd locket-partner && ./install.sh'
 echo "deployed to $TARGET"

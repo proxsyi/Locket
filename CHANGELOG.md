@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here. Versioning follows SemVer.
 
+## v0.2.3 - 2026-06-23
+### Added
+- Login LaunchAgent now checks for updates first, then rotates and writes the lock-screen note immediately
+- Installer cleans up known legacy lock-screen LaunchAgents and files from earlier private builds
+
+### Fixed
+- Deploy helper now uses an interactive SSH session so the remote sudo password prompt works during install
+
 ## v0.2.0 - 2026-06-23
 ### Added
 - Login-triggered rotation picks a different note whenever the login LaunchAgent runs

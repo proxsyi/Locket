@@ -48,8 +48,13 @@ This needs the integration's **Update content** capability. Read-only falls back
 
 The installer writes three user LaunchAgents:
 
-- `com.locket.agent`: `RunAtLoad`, calls `locket-agent.py --rotate`, and picks a different note for each login-triggered load.
+- `com.locket.agent`: `RunAtLoad`, calls `locket-login.sh`, checks for updates first, then calls `locket-agent.py --rotate` and writes the login note immediately.
 - `com.locket.sync`: `StartInterval` 60, calls `locket-agent.py --sync`, and keeps the lock screen matched to the current Live note without rotating.
-- `com.locket.updater`: `RunAtLoad` plus `StartInterval` 3600, calls `locket-update.py`, checks GitHub tags, downloads the newest tagged source archive, and runs that version's installer in update mode while preserving local config.
+- `com.locket.updater`: `RunAtLoad` plus `StartInterval` 3600, calls `locket-update.py`, checks GitHub tags, downloads the newest tagged source archive, and runs that version's installer in update mode while preserving local config. Login also calls the updater before rotation, so updates are checked immediately on login.
 
 Auto-update is intentionally tag-based. A new version only rolls out after it is committed, tagged, and pushed.
+
+
+## Legacy cleanup
+
+The installer unloads and removes known private-build lock-screen LaunchAgents and old dotfolders from earlier iterations, including `com.cash.lockscreen-v2` and related labels, before loading Locket.

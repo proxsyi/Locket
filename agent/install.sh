@@ -32,8 +32,7 @@ write_agent_plist() {
     <key>ProgramArguments</key>
     <array>
         <string>/usr/bin/python3</string>
-        <string>$ROOT/locket-agent.py</string>
-        <string>--rotate</string>
+        <string>$ROOT/locket-login.sh</string>
     </array>
     <key>RunAtLoad</key><true/>
     <key>LimitLoadToSessionType</key><string>Aqua</string>
@@ -88,6 +87,17 @@ write_updater_plist() {
 PLIST
 }
 
+
+cleanup_legacy() {
+    LEGACY_PLISTS="$HOME/Library/LaunchAgents/com.cash.lockscreen-notes.plist $HOME/Library/LaunchAgents/com.cash.lockscreen-v2.plist $HOME/Library/LaunchAgents/com.cash.lockscreen.plist $HOME/Library/LaunchAgents/com.cash.lauren-lockscreen.plist $HOME/Library/LaunchAgents/com.cash.anniversary-surprise.plist"
+    for PLIST in $LEGACY_PLISTS; do
+        launchctl unload -w "$PLIST" 2>/dev/null || true
+        rm -f "$PLIST"
+    done
+    rm -rf "$HOME/.lockscreen-notes" "$HOME/.lockscreen-notes-v2" "$HOME/.anniversary/lockscreen-notes-v2"
+    sudo rm -f /etc/sudoers.d/lockscreen-notes /etc/sudoers.d/lockscreen-v2 /etc/sudoers.d/lauren-lockscreen 2>/dev/null || true
+}
+
 load_plist() {
     PLIST="$1"
     LABEL="$2"
@@ -100,10 +110,12 @@ load_plist() {
 }
 
 echo "Installing Locket for $USER_NAME"
+cleanup_legacy
 mkdir -p "$ROOT"
 chmod 700 "$ROOT"
 copy_file locket-agent.py
 copy_file locket-update.py
+copy_file locket-login.sh
 copy_file install.sh
 copy_file uninstall.sh
 copy_file README.md
@@ -114,7 +126,7 @@ elif [ ! -f "$ROOT/locket.conf.json" ]; then
     exit 1
 fi
 chmod 600 "$ROOT/locket.conf.json"
-chmod 700 "$ROOT/locket-agent.py" "$ROOT/locket-update.py"
+chmod 700 "$ROOT/locket-agent.py" "$ROOT/locket-update.py" "$ROOT/locket-login.sh"
 if [ -n "$VERSION_ARG" ]; then
     echo "$VERSION_ARG" > "$ROOT/version"
 elif [ -f "$SRC_DIR/VERSION" ]; then

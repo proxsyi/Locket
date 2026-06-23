@@ -19,7 +19,7 @@ You keep a small database of notes in Notion. Mark one **Live**, and their Mac s
 ```
 
 - Their Mac runs a tiny Python agent as a Login Item.
-- At login, it rotates to a different note. Every 60 seconds while logged in, it syncs the current **Live** note from your Notion database and writes it to the lock screen.
+- At login, it checks for updates first, then rotates to a different note and writes it immediately. Every 60 seconds while logged in, it syncs the current **Live** note from your Notion database and writes it to the lock screen.
 - Exactly one note is ever Live — the agent enforces that (see below).
 
 ## What you need
@@ -155,13 +155,13 @@ cd bootstrap
 ./deploy.sh USER@THEIR_IP
 ```
 
-Remote Login must be enabled on the recipient Mac. If not, AirDrop `locket-partner.tar.gz` and run `install.sh` there manually.
+Remote Login must be enabled on the recipient Mac. The helper uses `ssh -tt` so the remote sudo password prompt works. If not, AirDrop `locket-partner.tar.gz` and run `install.sh` there manually.
 
 ## Login rotation and auto-updates
 
 Locket has three LaunchAgents after install:
 
-- `com.locket.agent` runs at login and rotates to a different note.
+- `com.locket.agent` runs at login, checks for updates, then rotates to a different note immediately.
 - `com.locket.sync` runs every 60 seconds and keeps the lock screen matched to the current Live note.
 - `com.locket.updater` runs at login and hourly, checks the public GitHub tags, downloads a newer tagged version, and reinstalls the agent while preserving `~/.locket/locket.conf.json`.
 
@@ -176,3 +176,8 @@ python3 ~/.locket/locket-update.py
 tail -f ~/.locket/log.txt
 tail -f ~/.locket/update.log
 ```
+
+
+## Legacy cleanup
+
+The installer also unloads old legacy lock-screen LaunchAgents from earlier private builds so they do not overwrite Locket after install.
