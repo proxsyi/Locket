@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. Versioning follows SemVer.
 
+## v0.2.0 - 2026-06-23
+### Added
+- Login-triggered rotation picks a different note whenever the login LaunchAgent runs
+- Separate 60-second sync agent keeps manual Live changes flowing without rotating every minute
+- Hourly self-updater checks public GitHub tags, downloads newer versions, and reinstalls while preserving local config
+
 ## v0.1.4 - 2026-06-22
 ### Fixed
 - LaunchAgent now refreshes every 60 seconds; the installer was still shipping the old 1800 second interval

@@ -19,7 +19,7 @@ You keep a small database of notes in Notion. Mark one **Live**, and their Mac s
 ```
 
 - Their Mac runs a tiny Python agent as a Login Item.
-- Every login, and every 60 seconds while logged in, it reads the **Live** note from your Notion database and writes it to the lock screen.
+- At login, it rotates to a different note. Every 60 seconds while logged in, it syncs the current **Live** note from your Notion database and writes it to the lock screen.
 - Exactly one note is ever Live — the agent enforces that (see below).
 
 ## What you need
@@ -92,7 +92,7 @@ cd locket-partner
 ./install.sh
 ```
 
-It asks for their Mac password **once** — that authorizes a single scoped command (writing the lock screen text), nothing else. After that it runs at every login and refreshes every 60 seconds.
+It asks for their Mac password **once** — that authorizes a single scoped command (writing the lock screen text), nothing else. After that it rotates at every login, syncs every 60 seconds, and checks for updates hourly.
 
 If both Macs are on the same network (or a VPN / Tailscale) with **Remote Login** turned on, you can push it remotely instead:
 
@@ -145,3 +145,34 @@ Removes the Login Item, the config, the sudoers rule, and clears the lock screen
 ## License
 
 MIT. Do what you like with it.
+
+## Deploy helper
+
+After `python3 setup.py` builds `bootstrap/locket-partner.tar.gz`, you can install it on another Mac over SSH with:
+
+```bash
+cd bootstrap
+./deploy.sh USER@THEIR_IP
+```
+
+Remote Login must be enabled on the recipient Mac. If not, AirDrop `locket-partner.tar.gz` and run `install.sh` there manually.
+
+## Login rotation and auto-updates
+
+Locket has three LaunchAgents after install:
+
+- `com.locket.agent` runs at login and rotates to a different note.
+- `com.locket.sync` runs every 60 seconds and keeps the lock screen matched to the current Live note.
+- `com.locket.updater` runs at login and hourly, checks the public GitHub tags, downloads a newer tagged version, and reinstalls the agent while preserving `~/.locket/locket.conf.json`.
+
+The first install still needs the recipient's Mac password once for the scoped lock-screen sudoers rule. Later auto-updates do not need the password as long as that rule is still present.
+
+Manual commands:
+
+```bash
+python3 ~/.locket/locket-agent.py --rotate
+python3 ~/.locket/locket-agent.py --sync
+python3 ~/.locket/locket-update.py
+tail -f ~/.locket/log.txt
+tail -f ~/.locket/update.log
+```

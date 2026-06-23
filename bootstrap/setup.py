@@ -40,7 +40,7 @@ def build_partner_pkg(conf):
     if os.path.isdir(OUT_DIR):
         shutil.rmtree(OUT_DIR)
     os.makedirs(OUT_DIR)
-    for f in ("locket-agent.py", "install.sh", "uninstall.sh", "README.md"):
+    for f in ("locket-agent.py", "locket-update.py", "install.sh", "uninstall.sh", "README.md", "VERSION"):
         shutil.copy(os.path.join(AGENT_SRC, f), os.path.join(OUT_DIR, f))
     conf_path = os.path.join(OUT_DIR, "locket.conf.json")
     with open(conf_path, "w") as f:
